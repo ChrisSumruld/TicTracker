@@ -1,12 +1,14 @@
 ﻿@page "/admincounter"
 @using TicTracker.Components.Models
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TicTrackerContext> DbFactory
 @rendermode InteractiveServer
 
 <PageTitle>Admin Counter</PageTitle>
 
 <h1>Admin Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<p role="status">Current count: 0</p>
 
 <button class="btn btn-primary" @onclick="() => CreateNewEntry(1)">It's Cal 1/College Algebra</button>
 <button class="btn btn-primary" @onclick="() => CreateNewEntry(2)">Am I Right?</button>
@@ -16,10 +18,17 @@
 <button class="btn btn-primary" @onclick="() => CreateNewEntry(6)">Let's Go</button>
 
 @code {
-    private int currentCount = 0;
+    private QuoteEntry QuoteEntry { get; set; } = default!;
+    //private override void OnInitialized() => QuoteEntry ??= new();
 
-    private void CreateNewEntry(int entryType)
+    private async Task CreateNewEntry(int entryType)
     {
-        //var newEntry = new QuoteEntry(entryType);
+        using var context = DbFactory.CreateDbContext();
+        context.QuoteEntry.Add(QuoteEntry = new QuoteEntry
+        {
+            EntryType = entryType,
+            EntryTime = DateTime.Now
+        });
+        await context.SaveChangesAsync();
     }
 }
