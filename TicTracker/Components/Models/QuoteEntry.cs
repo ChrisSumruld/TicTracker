@@ -9,8 +9,10 @@ namespace TicTracker.Components.Models
 
         public int Id { get; set; }
         public int EntryType { get; set; }
-        public DateTime EntryTime { get; set; }
-        private readonly Dictionary<int, string> entryToQuoteTranslation = new()
+        public TimeOnly EntryTime { get; set; }
+        public DateOnly EntryDate { get; set; }
+        public int DailyCounter { get; set; }
+        private static readonly Dictionary<int, string> entryToQuoteTranslation = new()
         {
             {1, "It's Cal 1/College Algebra"},
             {2, "Am I Right?"},
@@ -19,5 +21,10 @@ namespace TicTracker.Components.Models
             {5, "Ack"},
             {6, "Lets Go"}
         };
+
+        public string GetQuote()
+        {
+            return entryToQuoteTranslation[this.EntryType];
+        }
     }
 }

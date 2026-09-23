@@ -27,7 +27,9 @@
         context.QuoteEntry.Add(QuoteEntry = new QuoteEntry
         {
             EntryType = entryType,
-            EntryTime = DateTime.Now
+            EntryTime = TimeOnly.FromDateTime(DateTime.Now),
+            EntryDate = DateOnly.FromDateTime(DateTime.Now),
+            DailyCounter = 1
         });
         await context.SaveChangesAsync();
     }

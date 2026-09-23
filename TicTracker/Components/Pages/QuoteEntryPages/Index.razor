@@ -15,8 +15,10 @@
 </p>
 
 <QuickGrid Class="table" Items="context.QuoteEntry">
-    <PropertyColumn Property="quoteentry => quoteentry.EntryType" />
+    <PropertyColumn Property="quoteentry => quoteentry.GetQuote()" />
     <PropertyColumn Property="quoteentry => quoteentry.EntryTime" />
+    <PropertyColumn Property="quoteentry => quoteentry.EntryDate" />
+    <PropertyColumn Property="quoteentry => quoteentry.DailyCounter" />
 
     <TemplateColumn Context="quoteentry">
         <a href="@($"quoteentrys/edit?id={quoteentry.Id}")">Edit</a> |
