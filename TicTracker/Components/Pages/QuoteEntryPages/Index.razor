@@ -1,0 +1,37 @@
+@page "/quoteentrys"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using TicTracker.Components.Models
+@implements IAsyncDisposable
+@inject IDbContextFactory<TicTrackerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="quoteentrys/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.QuoteEntry">
+    <PropertyColumn Property="quoteentry => quoteentry.EntryType" />
+    <PropertyColumn Property="quoteentry => quoteentry.EntryTime" />
+
+    <TemplateColumn Context="quoteentry">
+        <a href="@($"quoteentrys/edit?id={quoteentry.Id}")">Edit</a> |
+        <a href="@($"quoteentrys/details?id={quoteentry.Id}")">Details</a> |
+        <a href="@($"quoteentrys/delete?id={quoteentry.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private TicTrackerContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

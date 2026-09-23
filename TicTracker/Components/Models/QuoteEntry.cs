@@ -1,16 +1,15 @@
-﻿namespace TicTracker.Components.Resources
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TicTracker.Components.Models
 {
     public class QuoteEntry
     {
         //public 
-        public QuoteEntry(int entryType)
-        {
-            this.entryType = entryType;
-            this.entryTime = DateTime.Now;
-        }
 
-        int entryType;
-        DateTime entryTime;
+        public int Id { get; set; }
+        public int EntryType { get; set; }
+        public DateTime EntryTime { get; set; }
         private readonly Dictionary<int, string> entryToQuoteTranslation = new()
         {
             {1, "It's Cal 1/College Algebra"},

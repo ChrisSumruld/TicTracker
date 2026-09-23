@@ -1,0 +1,51 @@
+@page "/quoteentrys/create"
+@using Microsoft.EntityFrameworkCore
+@using TicTracker.Components.Models
+@inject IDbContextFactory<TicTrackerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>QuoteEntry</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="QuoteEntry" OnValidSubmit="AddQuoteEntry" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="entrytype" class="form-label">EntryType:</label> 
+                <InputNumber id="entrytype" @bind-Value="QuoteEntry.EntryType" class="form-control" /> 
+                <ValidationMessage For="() => QuoteEntry.EntryType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="entrytime" class="form-label">EntryTime:</label> 
+                <InputDate id="entrytime" @bind-Value="QuoteEntry.EntryTime" class="form-control" /> 
+                <ValidationMessage For="() => QuoteEntry.EntryTime" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/quoteentrys">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private QuoteEntry QuoteEntry { get; set; } = default!;
+
+    protected override void OnInitialized() => QuoteEntry ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddQuoteEntry()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.QuoteEntry.Add(QuoteEntry);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/quoteentrys");
+    }
+}

@@ -1,0 +1,94 @@
+@page "/quoteentrys/edit"
+@using Microsoft.EntityFrameworkCore
+@using TicTracker.Components.Models
+@inject IDbContextFactory<TicTrackerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>QuoteEntry</h2>
+<hr />
+@if (QuoteEntry is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="QuoteEntry" OnValidSubmit="UpdateQuoteEntry" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="QuoteEntry.Id" value="@QuoteEntry.Id" />
+                <div class="mb-3">
+                    <label for="entrytype" class="form-label">EntryType:</label>
+                    <InputNumber id="entrytype" @bind-Value="QuoteEntry.EntryType" class="form-control" />
+                    <ValidationMessage For="() => QuoteEntry.EntryType" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="entrytime" class="form-label">EntryTime:</label>
+                    <InputDate id="entrytime" @bind-Value="QuoteEntry.EntryTime" class="form-control" />
+                    <ValidationMessage For="() => QuoteEntry.EntryTime" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/quoteentrys">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private QuoteEntry? QuoteEntry { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        QuoteEntry ??= await context.QuoteEntry.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (QuoteEntry is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateQuoteEntry()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(QuoteEntry!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!QuoteEntryExists(QuoteEntry!.Id))
+            {
+                NavigationManager.NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/quoteentrys");
+    }
+
+    private bool QuoteEntryExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.QuoteEntry.Any(e => e.Id == id);
+    }
+}

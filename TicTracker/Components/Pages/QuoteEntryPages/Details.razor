@@ -1,0 +1,48 @@
+@page "/quoteentrys/details"
+@using Microsoft.EntityFrameworkCore
+@using TicTracker.Components.Models
+@inject IDbContextFactory<TicTrackerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>QuoteEntry</h2>
+    <hr />
+    @if (quoteentry is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">EntryType</dt>
+            <dd class="col-sm-10">@quoteentry.EntryType</dd>
+            <dt class="col-sm-2">EntryTime</dt>
+            <dd class="col-sm-10">@quoteentry.EntryTime</dd>
+        </dl>
+        <div>
+            <a href="@($"/quoteentrys/edit?id={quoteentry.Id}")">Edit</a> |
+            <a href="@($"/quoteentrys")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private QuoteEntry? quoteentry;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        quoteentry = await context.QuoteEntry.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (quoteentry is null)
+        {
+            NavigationManager.NotFound();
+        }
+    }
+}
