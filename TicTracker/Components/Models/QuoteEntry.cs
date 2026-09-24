@@ -19,7 +19,7 @@ namespace TicTracker.Components.Models
             {3, "Hello?"},
             {4, "Come up?"},
             {5, "Ack"},
-            {6, "Lets Go"}
+            {6, "Let's Go"}
         };
 
         public string GetQuote()
