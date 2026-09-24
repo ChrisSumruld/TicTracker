@@ -1,4 +1,4 @@
-@page "/quoteentrys/edit"
+@page "/quoteentries/edit"
 @using Microsoft.EntityFrameworkCore
 @using TicTracker.Components.Models
 @inject IDbContextFactory<TicTrackerContext> DbFactory
@@ -83,7 +83,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/quoteentrys");
+        NavigationManager.NavigateTo("/quoteentries");
     }
 
     private bool QuoteEntryExists(int id)

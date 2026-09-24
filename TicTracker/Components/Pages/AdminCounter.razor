@@ -20,6 +20,7 @@
 @code {
     private QuoteEntry QuoteEntry { get; set; } = default!;
     //private override void OnInitialized() => QuoteEntry ??= new();
+    static private int[] DailyCounters = new int[6];
 
     private async Task CreateNewEntry(int entryType)
     {
@@ -29,7 +30,7 @@
             EntryType = entryType,
             EntryTime = TimeOnly.FromDateTime(DateTime.Now),
             EntryDate = DateOnly.FromDateTime(DateTime.Now),
-            DailyCounter = 1
+            DailyCounter = ++DailyCounters[entryType]
         });
         await context.SaveChangesAsync();
     }

@@ -1,4 +1,4 @@
-@page "/quoteentrys/delete"
+@page "/quoteentries/delete"
 @using Microsoft.EntityFrameworkCore
 @using TicTracker.Components.Models
 @inject IDbContextFactory<TicTrackerContext> DbFactory
@@ -54,6 +54,6 @@
         using var context = DbFactory.CreateDbContext();
         context.QuoteEntry.Remove(quoteentry!);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/quoteentrys");
+        NavigationManager.NavigateTo("/quoteentries");
     }
 }

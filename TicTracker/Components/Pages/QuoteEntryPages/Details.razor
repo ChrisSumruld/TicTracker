@@ -1,4 +1,4 @@
-@page "/quoteentrys/details"
+@page "/quoteentries/details"
 @using Microsoft.EntityFrameworkCore
 @using TicTracker.Components.Models
 @inject IDbContextFactory<TicTrackerContext> DbFactory
@@ -23,8 +23,8 @@
             <dd class="col-sm-10">@quoteentry.EntryTime</dd>
         </dl>
         <div>
-            <a href="@($"/quoteentrys/edit?id={quoteentry.Id}")">Edit</a> |
-            <a href="@($"/quoteentrys")">Back to List</a>
+            <a href="@($"/quoteentries/edit?id={quoteentry.Id}")">Edit</a> |
+            <a href="@($"/quoteentries")">Back to List</a>
         </div>
     }
 </div>
