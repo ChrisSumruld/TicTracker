@@ -20,18 +20,32 @@
 @code {
     private QuoteEntry QuoteEntry { get; set; } = default!;
     //private override void OnInitialized() => QuoteEntry ??= new();
-    static private int[] DailyCounters = new int[6];
+    static private int[] DailyCounters = new int[6] { 1, 1, 1, 1, 1, 1 };
+
 
     private async Task CreateNewEntry(int entryType)
     {
         using var context = DbFactory.CreateDbContext();
+        await StartupCounters();
         context.QuoteEntry.Add(QuoteEntry = new QuoteEntry
         {
             EntryType = entryType,
             EntryTime = TimeOnly.FromDateTime(DateTime.Now),
             EntryDate = DateOnly.FromDateTime(DateTime.Now),
-            DailyCounter = ++DailyCounters[entryType]
+            DailyCounter = DailyCounters[entryType - 1]
         });
         await context.SaveChangesAsync();
+    }
+
+    private async Task StartupCounters()
+    {
+        using var context = DbFactory.CreateDbContext();
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var entriesToday = await context.QuoteEntry.Where(q => q.EntryDate == today).ToListAsync();
+        DailyCounters = new int[6] { 1, 1, 1, 1, 1, 1 };
+        foreach (var entry in entriesToday)
+        {
+            DailyCounters[entry.EntryType - 1]++;
+        }
     }
 }
