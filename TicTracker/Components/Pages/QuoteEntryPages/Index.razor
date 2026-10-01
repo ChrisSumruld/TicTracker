@@ -15,6 +15,7 @@
 </p>
 
 <QuickGrid Class="table" Items="context.QuoteEntry">
+    <PropertyColumn Property="quoteentry => quoteentry.Id" Title="Id"/>
     <PropertyColumn Property="quoteentry => quoteentry.GetQuote()" Title="Quote"/>
     <PropertyColumn Property="quoteentry => quoteentry.EntryTime" Title="Time of Entry"/>
     <PropertyColumn Property="quoteentry => quoteentry.EntryDate" Title="Date of Entry"/>

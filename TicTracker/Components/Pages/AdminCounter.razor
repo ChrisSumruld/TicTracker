@@ -8,7 +8,7 @@
 
 <h1>Admin Counter</h1>
 
-<p role="status">Current count: 0</p>
+<p role="status">Current count: @(DailyCounters[0] - 1) @(DailyCounters[1] - 1) @(DailyCounters[2] - 1) @(DailyCounters[3] - 1) @(DailyCounters[4] - 1) @(DailyCounters[5] - 1) </p>
 
 <button class="btn btn-primary" @onclick="() => CreateNewEntry(1)">It's Cal 1/College Algebra</button>
 <button class="btn btn-primary" @onclick="() => CreateNewEntry(2)">Am I Right?</button>
@@ -19,14 +19,16 @@
 
 @code {
     private QuoteEntry QuoteEntry { get; set; } = default!;
-    //private override void OnInitialized() => QuoteEntry ??= new();
-    static private int[] DailyCounters = new int[6] { 1, 1, 1, 1, 1, 1 };
+    private int[] DailyCounters = new int[6] { 1, 1, 1, 1, 1, 1 };
 
+    protected override async Task OnInitializedAsync()
+    {
+        await StartupCounters();
+    }
 
     private async Task CreateNewEntry(int entryType)
     {
         using var context = DbFactory.CreateDbContext();
-        await StartupCounters();
         context.QuoteEntry.Add(QuoteEntry = new QuoteEntry
         {
             EntryType = entryType,
@@ -35,17 +37,34 @@
             DailyCounter = DailyCounters[entryType - 1]
         });
         await context.SaveChangesAsync();
+        await IncrementCounter(entryType);
+        StateHasChanged();
     }
 
     private async Task StartupCounters()
     {
         using var context = DbFactory.CreateDbContext();
         var today = DateOnly.FromDateTime(DateTime.Now);
-        var entriesToday = await context.QuoteEntry.Where(q => q.EntryDate == today).ToListAsync();
+        var counts = await context.QuoteEntry
+            .Where(q => q.EntryDate == today)
+            .GroupBy(q => q.EntryType)
+            .Select(g => new { EntryType = g.Key, Count = g.Count() })
+            .ToListAsync();
+
         DailyCounters = new int[6] { 1, 1, 1, 1, 1, 1 };
-        foreach (var entry in entriesToday)
+        foreach (var c in counts)
         {
-            DailyCounters[entry.EntryType - 1]++;
+            var idx = c.EntryType - 1;
+            if (idx >= 0 && idx < DailyCounters.Length)
+            {
+                DailyCounters[idx] = c.Count + 1;
+            }
         }
     }
+
+    private async Task IncrementCounter(int entryType)
+    {
+        DailyCounters[entryType - 1]++;
+        await Task.CompletedTask;
+    }   
 }
